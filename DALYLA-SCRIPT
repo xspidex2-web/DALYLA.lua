@@ -1,0 +1,104 @@
+-- GUI + Funções DALYLA
+local Players = game:GetService("Players")
+local plr = Players.LocalPlayer
+local gui = Instance.new("ScreenGui", plr:WaitForChild("PlayerGui"))
+gui.ResetOnSpawn = false
+
+-- Botão de abrir painel (redondo)
+local toggle = Instance.new("TextButton", gui)
+toggle.Size = UDim2.new(0, 70, 0, 70)
+toggle.Position = UDim2.new(0.5, -35, 0.85, 0)
+toggle.BackgroundColor3 = Color3.fromRGB(255, 150, 180)
+toggle.Text = "🩷"
+toggle.TextColor3 = Color3.new(1, 1, 1)
+toggle.Font = Enum.Font.GothamBlack
+toggle.TextSize = 30
+toggle.Active = true
+toggle.Draggable = true
+
+local toggleCorner = Instance.new("UICorner", toggle)
+toggleCorner.CornerRadius = UDim.new(1, 0)
+
+-- Painel principal
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 260, 0, 330)
+frame.Position = UDim2.new(0.5, -130, 0.5, -165)
+frame.BackgroundColor3 = Color3.fromRGB(255, 170, 200)
+frame.BorderSizePixel = 0
+frame.Visible = false
+frame.Active = true
+frame.Draggable = true
+
+local uiStroke = Instance.new("UIStroke", frame)
+uiStroke.Thickness = 3
+uiStroke.Color = Color3.fromRGB(255, 90, 150)
+
+local uiCorner = Instance.new("UICorner", frame)
+uiCorner.CornerRadius = UDim.new(0, 20)
+
+-- Título
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundTransparency = 1
+title.Text = "DALYLA"
+title.Font = Enum.Font.GothamBlack
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextSize = 32
+
+-- Imagem do painel
+local img = Instance.new("ImageLabel", frame)
+img.Size = UDim2.new(0, 200, 0, 200)
+img.Position = UDim2.new(0.5, -100, 0, 50)
+img.BackgroundTransparency = 1
+img.Image = "rbxassetid://105230645663644"
+
+local imgCorner = Instance.new("UICorner", img)
+imgCorner.CornerRadius = UDim.new(0, 20)
+
+-- Botão de salvar posição
+local saveBtn = Instance.new("TextButton", frame)
+saveBtn.Size = UDim2.new(1, -40, 0, 40)
+saveBtn.Position = UDim2.new(0, 20, 0, 260)
+saveBtn.BackgroundColor3 = Color3.fromRGB(255, 120, 160)
+saveBtn.Text = "Salvar Posição"
+saveBtn.TextColor3 = Color3.new(1, 1, 1)
+saveBtn.Font = Enum.Font.GothamBold
+saveBtn.TextSize = 22
+
+local saveCorner = Instance.new("UICorner", saveBtn)
+saveCorner.CornerRadius = UDim.new(0, 10)
+
+-- Botão teleportar
+local tpBtn = Instance.new("TextButton", frame)
+tpBtn.Size = UDim2.new(1, -40, 0, 40)
+tpBtn.Position = UDim2.new(0, 20, 0, 305)
+tpBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 120)
+tpBtn.Text = "Teleportar"
+tpBtn.TextColor3 = Color3.new(1, 1, 1)
+tpBtn.Font = Enum.Font.GothamBlack
+tpBtn.TextSize = 22
+
+local tpCorner = Instance.new("UICorner", tpBtn)
+tpCorner.CornerRadius = UDim.new(0, 10)
+
+-- Sistema de salvar posição / teleportar
+local savedPos = nil
+
+saveBtn.MouseButton1Click:Connect(function()
+    local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        savedPos = hrp.CFrame
+    end
+end)
+
+tpBtn.MouseButton1Click:Connect(function()
+    local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
+    if hrp and savedPos then
+        hrp.CFrame = savedPos
+    end
+end)
+
+-- Abrir / fechar painel
+toggle.MouseButton1Click:Connect(function()
+    frame.Visible = not frame.Visible
+end)
