@@ -1,104 +1,85 @@
--- GUI + Funções DALYLA
-local Players = game:GetService("Players")
-local plr = Players.LocalPlayer
+-- DALYLA PANEL (rosa)
+
+local plr = game.Players.LocalPlayer
+
 local gui = Instance.new("ScreenGui", plr:WaitForChild("PlayerGui"))
 gui.ResetOnSpawn = false
 
--- Botão de abrir painel (redondo)
-local toggle = Instance.new("TextButton", gui)
-toggle.Size = UDim2.new(0, 70, 0, 70)
-toggle.Position = UDim2.new(0.5, -35, 0.85, 0)
-toggle.BackgroundColor3 = Color3.fromRGB(255, 150, 180)
-toggle.Text = "🩷"
-toggle.TextColor3 = Color3.new(1, 1, 1)
-toggle.Font = Enum.Font.GothamBlack
-toggle.TextSize = 30
-toggle.Active = true
-toggle.Draggable = true
+local toggleBtn = Instance.new("TextButton", gui)
+toggleBtn.Size = UDim2.new(0,60,0,60)
+toggleBtn.Position = UDim2.new(0.5, -30, 0.85, 0)
+toggleBtn.Text = "💗"
+toggleBtn.BackgroundColor3 = Color3.fromRGB(255,120,160)
+Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(1,0)
 
-local toggleCorner = Instance.new("UICorner", toggle)
-toggleCorner.CornerRadius = UDim.new(1, 0)
-
--- Painel principal
 local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 260, 0, 330)
-frame.Position = UDim2.new(0.5, -130, 0.5, -165)
-frame.BackgroundColor3 = Color3.fromRGB(255, 170, 200)
-frame.BorderSizePixel = 0
+frame.Size = UDim2.new(0,240,0,200)
+frame.Position = UDim2.new(0.5, -120, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(255,150,180)
 frame.Visible = false
-frame.Active = true
-frame.Draggable = true
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0,16)
 
-local uiStroke = Instance.new("UIStroke", frame)
-uiStroke.Thickness = 3
-uiStroke.Color = Color3.fromRGB(255, 90, 150)
-
-local uiCorner = Instance.new("UICorner", frame)
-uiCorner.CornerRadius = UDim.new(0, 20)
-
--- Título
 local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 40)
+title.Size = UDim2.new(1,0,0,34)
 title.BackgroundTransparency = 1
 title.Text = "DALYLA"
 title.Font = Enum.Font.GothamBlack
-title.TextColor3 = Color3.new(1, 1, 1)
-title.TextSize = 32
+title.TextSize = 26
+title.TextColor3 = Color3.new(1,1,1)
 
--- Imagem do painel
-local img = Instance.new("ImageLabel", frame)
-img.Size = UDim2.new(0, 200, 0, 200)
-img.Position = UDim2.new(0.5, -100, 0, 50)
-img.BackgroundTransparency = 1
-img.Image = "rbxassetid://105230645663644"
+local function createBtn(txt, y)
+    local b = Instance.new("TextButton", frame)
+    b.Size = UDim2.new(1,-30,0,38)
+    b.Position = UDim2.new(0,15,0,y)
+    b.Text = txt
+    b.BackgroundColor3 = Color3.fromRGB(255,70,120)
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 20
+    Instance.new("UICorner", b).CornerRadius = UDim.new(0,8)
+    return b
+end
 
-local imgCorner = Instance.new("UICorner", img)
-imgCorner.CornerRadius = UDim.new(0, 20)
+local btn1 = createBtn("ESP BRAINROT", 45)
+local btn2 = createBtn("ESP PESSOAS", 90)
+local btn3 = createBtn("TELEGUIADO", 135)
+local btn4 = createBtn("ROUBAR BRAINROT", 180)
 
--- Botão de salvar posição
-local saveBtn = Instance.new("TextButton", frame)
-saveBtn.Size = UDim2.new(1, -40, 0, 40)
-saveBtn.Position = UDim2.new(0, 20, 0, 260)
-saveBtn.BackgroundColor3 = Color3.fromRGB(255, 120, 160)
-saveBtn.Text = "Salvar Posição"
-saveBtn.TextColor3 = Color3.new(1, 1, 1)
-saveBtn.Font = Enum.Font.GothamBold
-saveBtn.TextSize = 22
-
-local saveCorner = Instance.new("UICorner", saveBtn)
-saveCorner.CornerRadius = UDim.new(0, 10)
-
--- Botão teleportar
-local tpBtn = Instance.new("TextButton", frame)
-tpBtn.Size = UDim2.new(1, -40, 0, 40)
-tpBtn.Position = UDim2.new(0, 20, 0, 305)
-tpBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 120)
-tpBtn.Text = "Teleportar"
-tpBtn.TextColor3 = Color3.new(1, 1, 1)
-tpBtn.Font = Enum.Font.GothamBlack
-tpBtn.TextSize = 22
-
-local tpCorner = Instance.new("UICorner", tpBtn)
-tpCorner.CornerRadius = UDim.new(0, 10)
-
--- Sistema de salvar posição / teleportar
-local savedPos = nil
-
-saveBtn.MouseButton1Click:Connect(function()
-    local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then
-        savedPos = hrp.CFrame
-    end
-end)
-
-tpBtn.MouseButton1Click:Connect(function()
-    local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
-    if hrp and savedPos then
-        hrp.CFrame = savedPos
-    end
-end)
-
--- Abrir / fechar painel
-toggle.MouseButton1Click:Connect(function()
+toggleBtn.MouseButton1Click:Connect(function()
     frame.Visible = not frame.Visible
+end)
+
+-- Arrastar
+local UserInputService = game:GetService("UserInputService")
+local dragging = false
+local dragStart
+local startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    frame.Position = UDim2.new(
+        startPos.X.Scale,
+        startPos.X.Offset + delta.X,
+        startPos.Y.Scale,
+        startPos.Y.Offset + delta.Y
+    )
+end
+
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+    end
+end)
+
+frame.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        update(input)
+    end
 end)
